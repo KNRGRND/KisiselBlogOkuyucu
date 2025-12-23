@@ -1,7 +1,7 @@
 package com.example.rssuygulamasi
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel // Değişti
+import androidx.lifecycle.AndroidViewModel 
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.AppDatabase
 import com.example.myapplication.BlogItem
@@ -14,26 +14,24 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.net.URL
 
-// ViewModel yerine AndroidViewModel yaptık (Database için Context lazım)
+
 class BlogViewModel(application: Application) : AndroidViewModel(application) {
 
-    // Veritabanı bağlantısı
+    
     private val db = AppDatabase.getDatabase(application)
     private val dao = db.favoriteDao()
 
-    // İNTERNETTEN GELENLER
+    
     private val _blogPosts = MutableStateFlow<List<BlogItem>>(emptyList())
     val blogPosts = _blogPosts.asStateFlow()
 
-    // FAVORİLER (Veritabanından otomatik güncellenir)
-    // stateIn: Flow'u StateFlow'a çevirir
+   
     val favoritePosts = dao.getAllFavorites()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
-    // Kategoriler
     val categories = listOf(
         "Teknoloji" to "https://www.wired.com/feed/rss",
         "Bilim" to "https://www.sciencealert.com/feed",
@@ -45,7 +43,7 @@ class BlogViewModel(application: Application) : AndroidViewModel(application) {
     private val _selectedCategory = MutableStateFlow(categories[0])
     val selectedCategory = _selectedCategory.asStateFlow()
 
-    // Hangi sekmedeyiz? (Haberler mi, Favoriler mi?)
+    
     private val _isShowingFavorites = MutableStateFlow(false)
     val isShowingFavorites = _isShowingFavorites.asStateFlow()
 
@@ -53,12 +51,11 @@ class BlogViewModel(application: Application) : AndroidViewModel(application) {
         fetchRssData()
     }
 
-    // Favori Ekleme/Çıkarma İşlemi
+    
     fun toggleFavorite(post: BlogItem) {
         viewModelScope.launch {
             val currentFavs = favoritePosts.value
-            // Eğer listede varsa sil, yoksa ekle
-            // Linkler üzerinden kontrol ediyoruz
+            
             val exists = currentFavs.any { it.link == post.link }
 
             if (exists) {
@@ -69,14 +66,14 @@ class BlogViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // Sekme Değiştirme
+  
     fun showFavorites(show: Boolean) {
         _isShowingFavorites.value = show
     }
 
     fun onCategorySelected(category: Pair<String, String>) {
         _selectedCategory.value = category
-        _isShowingFavorites.value = false // Kategori seçince haberlere dön
+        _isShowingFavorites.value = false 
         fetchRssData()
     }
 
