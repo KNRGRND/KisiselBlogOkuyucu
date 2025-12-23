@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = "home") {
                     composable("home") {
                         val viewModel: BlogViewModel = viewModel()
-                        // Veriler
+                       
                         val posts by viewModel.blogPosts.collectAsState()
                         val favorites by viewModel.favoritePosts.collectAsState()
                         val isLoading by viewModel.isLoading.collectAsState()
@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                                         Text(if (isShowingFavorites) "Favorilerim" else "Haber Akışı")
                                     },
                                     actions = {
-                                        // Favoriler ve Haberler arası geçiş butonu
+                                        
                                         IconButton(onClick = { viewModel.showFavorites(!isShowingFavorites) }) {
                                             Icon(
                                                 imageVector = if (isShowingFavorites) Icons.Default.List else Icons.Default.Favorite,
@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
                         ) { innerPadding ->
                             Column(modifier = Modifier.padding(innerPadding)) {
 
-                                // Eğer Favoriler sayfasındaysak kategori barını gizle
+                                
                                 if (!isShowingFavorites) {
                                     CategoryBar(
                                         categories = viewModel.categories,
@@ -88,7 +88,7 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
 
-                                // Hangi listeyi göstereceğiz?
+                                
                                 val listToShow = if (isShowingFavorites) favorites else posts
 
                                 if (isShowingFavorites && favorites.isEmpty()) {
@@ -96,7 +96,7 @@ class MainActivity : ComponentActivity() {
                                         Text("Henüz favori eklemediniz.")
                                     }
                                 } else {
-                                    // Çek-Yenile sadece haber akışında çalışsın
+                                    
                                     if (!isShowingFavorites) {
                                         PullToRefreshBox(
                                             isRefreshing = isLoading,
@@ -105,7 +105,7 @@ class MainActivity : ComponentActivity() {
                                         ) {
                                             BlogList(
                                                 posts = listToShow,
-                                                favorites = favorites, // Kalp rengi için favori listesini gönderiyoruz
+                                                favorites = favorites, 
                                                 modifier = Modifier.fillMaxSize(),
                                                 onPostClick = { url ->
                                                     val encodedUrl = URLEncoder.encode(url, StandardCharsets.UTF_8.toString())
@@ -115,7 +115,7 @@ class MainActivity : ComponentActivity() {
                                             )
                                         }
                                     } else {
-                                        // Favori listesinde çek-yenile olmaz
+                                        
                                         BlogList(
                                             posts = listToShow,
                                             favorites = favorites,
@@ -146,7 +146,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// --- BİLEŞENLER ---
+
 
 @Composable
 fun CategoryBar(
@@ -172,7 +172,7 @@ fun CategoryBar(
 @Composable
 fun BlogList(
     posts: List<BlogItem>,
-    favorites: List<BlogItem>, // Bu haber favori mi kontrolü için
+    favorites: List<BlogItem>, 
     modifier: Modifier = Modifier,
     onPostClick: (String) -> Unit,
     onFavoriteClick: (BlogItem) -> Unit
@@ -183,7 +183,7 @@ fun BlogList(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(posts) { post ->
-            // Bu post favoriler listesinde var mı?
+            
             val isFavorite = favorites.any { it.link == post.link }
 
             BlogCard(
@@ -211,9 +211,9 @@ fun BlogCard(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column {
-            // Resim Alanı
+            
             Box {
-                // Varsayılan resim veya kendi resmi
+                
                 val imageToShow = post.imageUrl ?: "https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=800&auto=format&fit=crop"
 
                 AsyncImage(
@@ -226,7 +226,7 @@ fun BlogCard(
                     modifier = Modifier.fillMaxWidth().height(200.dp)
                 )
 
-                // KALP BUTONU (Resmin sağ üst köşesine koyduk)
+                
                 IconButton(
                     onClick = onFavoriteClick,
                     modifier = Modifier
@@ -241,7 +241,7 @@ fun BlogCard(
                 }
             }
 
-            // Metin Alanı
+            
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = post.title,
