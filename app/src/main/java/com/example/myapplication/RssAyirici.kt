@@ -1,4 +1,4 @@
-package com.example.myapplication // <-- Paket ismini kontrol et
+package com.example.myapplication 
 
 import android.util.Xml
 import androidx.room.Entity
@@ -10,20 +10,20 @@ import java.io.InputStream
 data class BlogItem(
     val title: String,
     val description: String,
-    // Link her haberde eşsizdir, onu kimlik (ID) yapıyoruz
+    
     @PrimaryKey val link: String,
     val imageUrl: String?
 )
 
-// 2. Gelişmiş HTML Temizleyici
+
 fun String.removeHtmlTags(): String {
-    // RegexOption.DOT_MATCHES_ALL: Alt satıra sarkan kodları da siler
+    
     return this.replace(Regex("<.*?>", RegexOption.DOT_MATCHES_ALL), "")
         .replace("&nbsp;", " ")
         .trim()
 }
 
-// 3. XML Ayrıştırıcı (Resim Dedektifi Dahil)
+
 class RssParser {
     fun parse(inputStream: InputStream): List<BlogItem> {
         val parser = Xml.newPullParser()
@@ -37,7 +37,7 @@ class RssParser {
         val entries = mutableListOf<BlogItem>()
         while (parser.next() != XmlPullParser.END_DOCUMENT) {
             if (parser.eventType != XmlPullParser.START_TAG) continue
-            // "item" veya "entry" (bazı rss'lerde entry olabilir)
+            
             if (parser.name == "item" || parser.name == "entry") {
                 entries.add(readItem(parser))
             }
@@ -57,14 +57,14 @@ class RssParser {
             val name = parser.name
             when (name) {
                 "title" -> title = readText(parser)
-                "link" -> link = readText(parser) // Bazen link attribute olabilir ama genelde text'tir
+                "link" -> link = readText(parser) 
 
                 "description", "content:encoded", "content" -> {
                     val rawHtml = readText(parser)
-                    // Eğer description ise metni kaydet
+                    
                     if (name == "description") description = rawHtml
 
-                    // Resim bulma dedektifi: Henüz resim yoksa bu metnin içine bak
+                    
                     if (imageUrl == null) {
                         val imgRegex = Regex("""src\s*=\s*['"]([^'"]+)['"]""")
                         val match = imgRegex.find(rawHtml)
@@ -74,7 +74,7 @@ class RssParser {
                     }
                 }
 
-                // Standart RSS resim etiketleri
+                
                 "media:thumbnail", "media:content", "enclosure" -> {
                     val url = parser.getAttributeValue(null, "url")
                     if (imageUrl == null && url != null) {
